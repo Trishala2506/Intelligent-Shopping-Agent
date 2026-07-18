@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intelligent Shopping Agent</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      background: #ffffff;
+      color: #1f2328;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #7c5cd8;
+      color: #ffffff;
+      padding: 0 28px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 { font-size: 17px; font-weight: 600; letter-spacing: 0.2px; }
+    header span.tagline { margin-left: auto; font-size: 12px; opacity: 0.85; }
+
+    /* ── Hero ── */
+    .hero {
+      background: #f7f8fa;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 44px 24px 38px;
+      text-align: center;
+    }
+    .hero h2 { font-size: 27px; font-weight: 700; color: #1f2328; margin-bottom: 10px; }
+    .hero p  { font-size: 14px; color: #57606a; max-width: 580px; margin: 0 auto; line-height: 1.75; }
+
+    /* ── Chips ── */
+    .chips {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 8px; padding: 18px 24px 20px;
+      background: #f7f8fa; border-bottom: 1px solid #e5e7eb;
+    }
+    .chip {
+      background: #ffffff; border: 1px solid #e5e7eb; border-radius: 20px;
+      padding: 5px 14px; font-size: 12.5px; color: #7c5cd8; font-weight: 500; white-space: nowrap;
+    }
+
+    /* ── Cards ── */
+    .cards-section {
+      max-width: 960px; margin: 0 auto; padding: 36px 24px; width: 100%;
+    }
+    .cards-section h3 {
+      font-size: 15px; font-weight: 600; margin-bottom: 18px; color: #1f2328;
+    }
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px;
+    }
+    .card {
+      background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px;
+    }
+    .card-icon {
+      width: 36px; height: 36px; border-radius: 8px; background: #7c5cd8;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 12px;
+    }
+    .card h4 { font-size: 13.5px; font-weight: 600; margin-bottom: 6px; }
+    .card p  { font-size: 12.5px; color: #57606a; line-height: 1.65; }
+
+    /* ── Stats strip ── */
+    .stats {
+      background: #7c5cd8;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0;
+      border-top: 1px solid #6d4ec9; border-bottom: 1px solid #6d4ec9;
+    }
+    .stat {
+      flex: 1; min-width: 160px;
+      text-align: center; padding: 20px 16px;
+      border-right: 1px solid rgba(255,255,255,0.15);
+      color: #ffffff;
+    }
+    .stat:last-child { border-right: none; }
+    .stat .num { font-size: 24px; font-weight: 700; }
+    .stat .lbl { font-size: 12px; opacity: 0.85; margin-top: 3px; }
+
+    /* ── How it works ── */
+    .how-section {
+      max-width: 960px; margin: 0 auto; padding: 36px 24px 28px; width: 100%;
+    }
+    .how-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 18px; color: #1f2328; }
+    .steps { display: flex; flex-wrap: wrap; gap: 16px; }
+    .step {
+      flex: 1; min-width: 160px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%; background: #7c5cd8;
+      color: #fff; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .step-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .step-text p  { font-size: 12px; color: #57606a; line-height: 1.6; }
+
+    /* ── Disclaimer ── */
+    .disclaimer {
+      max-width: 960px; margin: 0 auto 40px; padding: 0 24px;
+    }
+    .disclaimer-inner {
+      background: #f0eeff; border: 1px solid #d0c4f7; border-radius: 8px;
+      padding: 13px 16px; font-size: 12.5px; color: #4c3a99; line-height: 1.6;
+    }
+    .disclaimer-inner strong { color: #3b2c7a; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center; font-size: 11px; color: #57606a;
+      padding: 14px 24px; border-top: 1px solid #e5e7eb;
+    }
+
+    /* ── wxo chat widget anchor ── */
+    #root {
+      position: fixed;
+      bottom: 0; right: 0;
+      width: 0; height: 0;
+      z-index: 9999;
+      overflow: visible;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="14" r="13" fill="white" fill-opacity="0.2"/>
+      <path d="M7 9h14l-1.5 8H8.5L7 9z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/>
+      <circle cx="11" cy="21" r="1.2" fill="white"/>
+      <circle cx="17" cy="21" r="1.2" fill="white"/>
+      <path d="M5 7h2l2 2" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <h1>Intelligent Shopping Agent</h1>
+    <span class="tagline">Powered by IBM watsonx Orchestrate</span>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h2>Your AI-Powered Shopping Assistant</h2>
+    <p>Discover products, compare prices, track orders, and get personalised recommendations — all through one intelligent conversation.</p>
+  </div>
+
+  <!-- Chips -->
+  <div class="chips">
+    <span class="chip">🛍 Product Discovery</span>
+    <span class="chip">💰 Price Comparison</span>
+    <span class="chip">📦 Order Tracking</span>
+    <span class="chip">⭐ Recommendations</span>
+    <span class="chip">🔖 Deal Alerts</span>
+    <span class="chip">🔄 Returns &amp; Refunds</span>
+    <span class="chip">🧾 Purchase History</span>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="stats">
+    <div class="stat"><div class="num">10M+</div><div class="lbl">Products Indexed</div></div>
+    <div class="stat"><div class="num">24/7</div><div class="lbl">Always Available</div></div>
+    <div class="stat"><div class="num">500+</div><div class="lbl">Retailer Partners</div></div>
+    <div class="stat"><div class="num">&lt;2s</div><div class="lbl">Average Response</div></div>
+  </div>
+
+  <!-- Feature cards -->
+  <div class="cards-section">
+    <h3>What the Shopping Agent can do</h3>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <circle cx="8" cy="8" r="5" stroke="white" stroke-width="1.5"/>
+            <path d="M12 12l3 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h4>Smart Product Search</h4>
+        <p>Describe what you need in plain language and get precise, filtered results instantly.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M3 5h12M3 9h8M3 13h5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h4>Price Comparison</h4>
+        <p>Automatically compare prices across multiple retailers to find you the best deal.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <rect x="3" y="3" width="12" height="12" rx="2" stroke="white" stroke-width="1.5"/>
+            <path d="M6 9l2 2 4-4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h4>Order Tracking</h4>
+        <p>Get real-time delivery updates and estimated arrival times for all your orders.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M9 2l2 4 4.5.7-3.2 3.1.7 4.5L9 12l-4 2.1.7-4.5L2.5 6.7 7 6z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h4>Personalised Picks</h4>
+        <p>Receive tailored product recommendations based on your preferences and history.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M9 3v6l3 3" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="9" cy="9" r="6" stroke="white" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <h4>Deal Alerts</h4>
+        <p>Set price drop alerts and get notified the moment your wishlist items go on sale.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="18" height="18" fill="none" viewBox="0 0 18 18">
+            <path d="M5 9h8M9 5l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h4>Easy Returns</h4>
+        <p>Initiate returns, track refund status, and resolve order issues without any hassle.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="how-section">
+    <h3>How it works</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <h5>Click the chat icon</h5>
+          <p>Open the Shopping Agent using the chat bubble in the bottom-right corner.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <h5>Describe what you need</h5>
+          <p>Type your request in natural language — no special commands needed.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <h5>Get instant results</h5>
+          <p>The agent searches, compares, and surfaces the best options for you.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <h5>Shop with confidence</h5>
+          <p>Make informed purchases with AI-backed insights and recommendations.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    <div class="disclaimer-inner">
+      <strong>Note:</strong> Product availability, prices, and delivery estimates are indicative and may vary by retailer.
+      Always confirm details on the retailer's website before completing a purchase.
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>Made with IBM Bob</footer>
+
+  <!-- IBM wxo chat bubble anchor — fixed bottom-right, zero footprint -->
+  <div id="root"></div>
+
+  <!-- IBM watsonx Orchestrate Chat Agent -->
+  <script>
+    window.wxOConfiguration = {
+      orchestrationID: "7a4bf15f8aaf42d4a391d7859659a919_091a3251-fb6d-46aa-bd5d-2c2ad47e3e9c",
+      hostURL: "https://au-syd.watson-orchestrate.cloud.ibm.com",
+      rootElementID: "root",
+      deploymentPlatform: "ibmcloud",
+      crn: "crn:v1:bluemix:public:watsonx-orchestrate:au-syd:a/7a4bf15f8aaf42d4a391d7859659a919:091a3251-fb6d-46aa-bd5d-2c2ad47e3e9c::",
+      chatOptions: {
+        agentId: "13cd3487-16e0-498c-bac4-f6af85635a14"
+      }
+    };
+    setTimeout(function () {
+      var script = document.createElement('script');
+      script.src = window.wxOConfiguration.hostURL + '/wxochat/wxoLoader.js?embed=true';
+      script.addEventListener('load', function () {
+        wxoLoader.init();
+      });
+      document.head.appendChild(script);
+    }, 0);
+  </script>
+
+</body>
+</html>
